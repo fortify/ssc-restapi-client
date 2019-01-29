@@ -1,4 +1,4 @@
-# ssc-restapi-client
+# Fortify Software Security Center REST API java client
 Communicate with Fortify Software Security Center through REST API in java, a swagger generated client
 
 ## Generated client notice:
@@ -103,7 +103,7 @@ public class AaTrainingStatusOfProjectVersionControllerApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://16.40.6.107:8080/ssc/api/v1*
+All URIs are relative to *https://SSC:8080/ssc/api/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
