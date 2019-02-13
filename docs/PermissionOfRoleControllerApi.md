@@ -1,6 +1,6 @@
 # PermissionOfRoleControllerApi
 
-All URIs are relative to *https://16.40.6.107:8080/ssc/api/v1*
+All URIs are relative to *https://SSC:8080/ssc/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
