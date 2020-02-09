@@ -93,6 +93,27 @@ public class ApiClient {
         authentications.put("FortifyToken", new ApiKeyAuth("header", "Authorization"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
+
+        // Set timeouts.
+        setTimeouts();
+    }
+
+    /**
+     * Set timeouts if environment variables exist for them.
+     */
+    public void setTimeouts(){
+        String connectiontimeout = System.getenv("HTTPCONNECTIONTIMEOUT");
+        if (connectiontimeout != null) {
+            httpClient.setConnectTimeout(Integer.valueOf(connectiontimeout), TimeUnit.SECONDS);
+        }
+        String readtimeout = System.getenv("HTTPREADTIMEOUT");
+        if (readtimeout != null) {
+            httpClient.setConnectTimeout(Integer.valueOf(readtimeout), TimeUnit.SECONDS);
+        }
+        String writetimeout = System.getenv("HTTPWRITETIMEOUT");
+        if (writetimeout != null) {
+            httpClient.setConnectTimeout(Integer.valueOf(writetimeout), TimeUnit.SECONDS);
+        }
     }
 
     /**
