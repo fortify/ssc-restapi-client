@@ -27,3 +27,7 @@ hs_err_pid*
 target
 .gradle
 build
+
+# integration test parameters
+src/it/resources/integration-test.properties
+
