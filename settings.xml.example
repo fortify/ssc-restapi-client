@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <mirrors>
+    <mirror>
+      <id>anyother</id>
+      <mirrorOf>central</mirrorOf>
+      <url>https://SERVER.test/artifactory/jcenter</url>
+    </mirror>
+  </mirrors>
+  <profiles>
+    <profile>
+      <repositories>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>libs-release</id>
+          <url>https://SERVER.test/artifactory/libs-release</url>
+        </repository>
+        <repository>
+          <snapshots />
+          <id>libs-snapshot</id>
+          <url>https://SERVER.test/artifactory/libs-snapshot</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>plugins-release-local</id>
+          <url>https://SERVER.test/artifactory/plugins-release-local</url>
+        </pluginRepository>
+      </pluginRepositories>
+      <id>artifactory</id>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>artifactory</activeProfile>
+  </activeProfiles>
+  <servers>
+    <server>
+      <id>anyother</id>
+      <username>USER</username>
+      <password>AKXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX8w</password>
+    </server>
+    <server>
+      <id>libs-release</id>
+      <username>USER</username>
+      <password>AKXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX8w</password>
+    </server>
+    <server>
+      <id>libs-snapshot</id>
+      <username>USER</username>
+      <password>AKXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX8w</password>
+    </server>
+    <server>
+      <id>plugins-release-local</id>
+      <username>USER</username>
+      <password>AKXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX8w</password>
+    </server>
+  </servers>
+</settings>
+

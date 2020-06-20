@@ -20,10 +20,19 @@ import com.fortify.ssc.restclient.model.ApiResultApiActionResponse;
 import com.fortify.ssc.restclient.model.ApiResultApplicationNameTestResponse;
 import com.fortify.ssc.restclient.model.ApiResultListProject;
 import com.fortify.ssc.restclient.model.ApiResultProject;
+import com.fortify.ssc.restclient.model.ApiActionResponse;
 import com.fortify.ssc.restclient.model.ApplicationNameTestRequest;
+import com.fortify.ssc.restclient.model.ApplicationNameTestResponse;
 import com.fortify.ssc.restclient.model.Project;
+
 import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Before;
+import static org.junit.Assert.*;
+
+import com.squareup.okhttp.mockwebserver.MockWebServer;
+import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,12 +42,14 @@ import java.util.Map;
 /**
  * API tests for ProjectControllerApi
  */
-@Ignore
 public class ProjectControllerApiTest {
 
     private final ProjectControllerApi api = new ProjectControllerApi();
 
-    
+    @Rule
+    public MockWebServer mockBackend = new MockWebServer();
+
+
     /**
      * doCollectionAction
      *
@@ -49,10 +60,24 @@ public class ProjectControllerApiTest {
      */
     @Test
     public void doCollectionActionProjectTest() throws ApiException {
-        ApiCollectionActionlong apiResourceAction = null;
-        ApiResultApiActionResponse response = api.doCollectionActionProject(apiResourceAction);
+        api.getApiClient().setBasePath(mockBackend.url("/ssc/api/v1").toString());
+        mockBackend.enqueue(
+                new MockResponse().setBody("{" +
+                        "\"data\":{" +
+                            "\"status\":\"success\"," +
+                            "\"message\":\"Application search completed\"," +
+                            "\"values\":{\"found\":false}" +
+                        "}," +
+                        "\"responseCode\":200" +
+                    "}")
+            );
+        ApiCollectionActionlong apiCollAction = new ApiCollectionActionlong()
+            .addIdsItem(1441L)
+            .type(ApiCollectionActionlong.TypeEnum.REFRESH);
+        ApiResultApiActionResponse response = api.doCollectionActionProject(apiCollAction);
 
-        // TODO: test validations
+        assertEquals("Application search completed", response.getData().getMessage());
+        assertEquals(ApiActionResponse.StatusEnum.SUCCESS, response.getData().getStatus());
     }
     
     /**
@@ -71,9 +96,36 @@ public class ProjectControllerApiTest {
         String q = null;
         Boolean fulltextsearch = null;
         String orderby = null;
+
+        api.getApiClient().setBasePath(mockBackend.url("/ssc/api/v1").toString());
+        mockBackend.enqueue(
+                new MockResponse().setBody("{\"data\": [" +
+                            "{" +
+                            "\"id\": 1441," +
+                            "\"name\": \"APP_ONE\"," +
+                            "\"description\": \"Description for APP_ONE\"," +
+                            "\"creationDate\": \"2019-06-14T15:39:27.000+0000\"," +
+                            "\"createdBy\": \"fortify_ci\"," +
+                            "\"issueTemplateId\": null," +
+                            "\"_href\": \"https://SERVER/ssc/api/v1/projects/1441\"" +
+                            "}," +
+                            "{" +
+                              "\"id\": 1442," +
+                              "\"name\": \"APP_TWO\"," +
+                              "\"description\": \"Description for APP_TWO\"," +
+                              "\"creationDate\": \"2019-06-14T15:46:50.000+0000\"," +
+                              "\"createdBy\": \"fortify_ci\"," +
+                              "\"issueTemplateId\": null," +
+                              "\"_href\": \"https://SERVER/ssc/api/v1/projects/1442\"" +
+                            "}" +
+                        "]," +
+                        "\"count\": 2," +
+                        "\"responseCode\": 200" +
+                    "}"));
+
         ApiResultListProject response = api.listProject(fields, start, limit, q, fulltextsearch, orderby);
 
-        // TODO: test validations
+        assertEquals(2L, response.getCount().longValue());
     }
     
     /**
@@ -86,11 +138,27 @@ public class ProjectControllerApiTest {
      */
     @Test
     public void readProjectTest() throws ApiException {
-        Long id = null;
-        String fields = null;
+        api.getApiClient().setBasePath(mockBackend.url("/ssc/api/v1").toString());
+        mockBackend.enqueue(
+                new MockResponse().setBody("{" +
+                        "\"data\":{" +
+                                "\"id\": 1441," +
+                                "\"name\": \"APP_ONE\"," +
+                                "\"description\": \"Description for APP_ONE\"," +
+                                "\"creationDate\": \"2019-06-14T15:39:27.000+0000\"," +
+                                "\"createdBy\": \"fortify_ci\"," +
+                                "\"issueTemplateId\": null," +
+                                "\"_href\": \"https://SERVER/ssc/api/v1/projects/1441\"" +
+                            "}," +
+                        "\"responseCode\": 200" +
+                        "}")
+            );
+        Long id = 1441L;
+        String fields = "name,description";
         ApiResultProject response = api.readProject(id, fields);
 
-        // TODO: test validations
+        assertEquals("APP_ONE", response.getData().getName());
+        assertEquals("Description for APP_ONE", response.getData().getDescription());
     }
     
     /**
@@ -103,10 +171,14 @@ public class ProjectControllerApiTest {
      */
     @Test
     public void testProjectTest() throws ApiException {
-        ApplicationNameTestRequest resource = null;
-        ApiResultApplicationNameTestResponse response = api.testProject(resource);
+        api.getApiClient().setBasePath(mockBackend.url("/ssc/api/v1").toString());
+        mockBackend.enqueue(
+                new MockResponse().setBody("{\"data\": {\"found\": true}, \"responseCode\": 200}")
+            );
+        ApplicationNameTestRequest testReq = new ApplicationNameTestRequest().applicationName("APP_ONE");
+        ApiResultApplicationNameTestResponse response = api.testProject(testReq);
 
-        // TODO: test validations
+        assertTrue(response.getData().isFound());
     }
     
     /**
@@ -119,11 +191,32 @@ public class ProjectControllerApiTest {
      */
     @Test
     public void updateProjectTest() throws ApiException {
-        Long id = null;
-        Project data = null;
+        api.getApiClient().setBasePath(mockBackend.url("/ssc/api/v1").toString());
+        mockBackend.enqueue(
+                new MockResponse().setBody("{" +
+                    "\"data\":{" +
+                        "\"id\":1441," +
+                        "\"name\":\"APP_ONE_ORIG\"," +
+                        "\"description\":\"Stashed description for the former APP_ONE\"," +
+                        "\"creationDate\":null," +
+                        "\"createdBy\":null," +
+                        "\"issueTemplateId\":null," +
+                        "\"_href\":\"https://SERVER/ssc/api/v1/projects/1441\"" +
+                    "}," +
+                    "\"responseCode\":200," +
+                    "\"links\":{" +
+                        "\"versions\":{" +
+                            "\"href\":\"https://SERVER/ssc/api/v1/projects/1441/versions\"" +
+                        "}" +
+                    "}" +
+                "}")
+            );
+        Long id = 1441L;
+        Project data = new Project().name("APP_ONE_ORIG").description("Stashed description for the former APP_ONE");
         ApiResultProject response = api.updateProject(id, data);
 
-        // TODO: test validations
+        assertEquals("APP_ONE_ORIG", response.getData().getName());
+        assertEquals("Stashed description for the former APP_ONE", response.getData().getDescription());
     }
     
 }
