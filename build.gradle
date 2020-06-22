@@ -1,5 +1,6 @@
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
 //apply from: file('fortify-custom.gradle')
 
 group = 'com.fortify'
@@ -17,7 +18,9 @@ buildscript {
 }
 
 repositories {
-    jcenter()
+    maven {
+        url artifactory_dependencies_url
+    }
 }
 
 
@@ -95,12 +98,88 @@ if(hasProperty('target') && target == 'android') {
     }
 }
 
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/it/java')
+        }
+        resources.srcDir file('src/it/resources')
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+task integrationTest(type: Test) {
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// https://stackoverflow.com/questions/19025138/gradle-how-to-generate-coverage-report-for-integration-test-using-jacoco
+// answered 2019-08-02 by Brice
+
+// Without it, the only data is the binary data, 
+// but I need the XML and HTML report after any test task
+tasks.withType(Test) {
+    finalizedBy jacocoTestReport
+}
+
+// Configure the report to look for executionData generated during the test and integrationTest task
+jacocoTestReport {
+    executionData(file("${project.buildDir}/jacoco/test.exec"),
+                  file("${project.buildDir}/jacoco/integrationTest.exec"))
+    reports {
+        // for sonarqube
+        xml.enabled true
+        xml.destination(file("${project.buildDir}/reports/jacoco/all-tests/jacocoAllTestReport.xml"))
+        // for devs
+        html.enabled true
+        html.destination file("${project.buildDir}/reports/jacoco/all-tests/html")
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+integrationTest.mustRunAfter test
+jacocoTestReport.dependsOn integrationTest
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            // enabled = false
+            element = 'CLASS'
+            excludes = ['*Test', '*IT']
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.0
+            }
+        }
+    }
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport
+check.dependsOn jacocoTestCoverageVerification
+
 dependencies {
     compile 'io.swagger:swagger-annotations:1.5.15'
     compile 'com.squareup.okhttp:okhttp:2.7.5'
     compile 'com.squareup.okhttp:logging-interceptor:2.7.5'
+    compile 'com.squareup.okhttp:mockwebserver:2.7.5'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'io.gsonfire:gson-fire:1.8.0'
     compile 'org.threeten:threetenbp:1.3.5'
+    compile 'javax.annotation:javax.annotation-api:1.3.2'
     testCompile 'junit:junit:4.12'
+    integrationTestCompile 'commons-codec:commons-codec:1.14'
+    integrationTestCompile 'org.apache.logging.log4j:log4j-api:2.12.1'
+    integrationTestRuntime 'org.apache.logging.log4j:log4j-core:2.12.1'
 }
+

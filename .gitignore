@@ -31,3 +31,6 @@ build
 # integration test parameters
 src/it/resources/integration-test.properties
 
+# Local artifactory parameters
+settings.xml
+gradle.properties
