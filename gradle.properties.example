@@ -1,0 +1,2 @@
+artifactory_dependencies_url=https://SERVER/artifactory/REPO
+org.gradle.daemon=false
