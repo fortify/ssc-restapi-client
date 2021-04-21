@@ -1,0 +1,21 @@
+# by default use heuristics
+*               text=auto
+
+# standard text files
+*.java          text
+*.properties    text
+*.gradle        text
+*.cfg           text
+*.xml           text
+*.json          text
+
+# binary file
+*.png           -text
+*.jpg           -text
+*.pdf           -text
+
+# special text files
+# NB: we must undo effect of "* text=auto" here
+*.bat           !text eol=crlf
+*.sh            !text eol=lf
+gradlew         !text eol=lf
