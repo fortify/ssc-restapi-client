@@ -1,8 +1,11 @@
 plugins {
-  id 'base'
   id 'java'
   id 'idea'
   id 'org.hidetake.swagger.generator' version '2.18.2'
+  id 'maven-publish'
+  id 'signing'
+  id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
+  id "biz.aQute.bnd.builder" version "5.3.0"
 }
 
 repositories {
@@ -11,6 +14,7 @@ repositories {
 
 group = 'com.fortify'
 version = '2.0'
+description 'Fortify SSC REST API client'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -29,6 +33,25 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives(sourcesJar) {
+        type 'source'
+    }
+    archives(javadocJar) {
+        type 'javadoc'
+    }
+}
+
 swaggerSources {
   ssc {
     inputFile = file('src/swagger/spec.json')
@@ -42,3 +65,60 @@ swaggerSources {
 compileJava.dependsOn swaggerSources.ssc.code
 sourceSets.main.java.srcDir "${swaggerSources.ssc.code.outputDir}/src/main/java"
 sourceSets.main.resources.srcDir "${swaggerSources.ssc.code.outputDir}/src/main/resources"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                groupId = project.group
+                artifactId = project.name
+                name = project.name
+                version = project.version
+                description = project.description
+                url = 'https://github.com/fortify/ssc-restapi-client'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'fortify'
+                        name = 'Fortify'
+                        email = 'fortify-oss@fortify.com'
+                        organization = 'Micro Focus Fortify'
+                        organizationUrl = 'https://www.microfocus.com/en-us/cyberres/application-security'
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/fortify/${rootProject.name}.git"
+                    developerConnection = "scm:git:https://github.com/fortify/${rootProject.name}.git"
+                    url = "https://github.com/fortify/${rootProject.name}"
+                }
+            }
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
+// Sign using signingKey and signingPassword properties
+signing {
+    def signingKey = findProperty("signingKey")
+    def signingPassword = findProperty("signingPassword")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    required { gradle.taskGraph.hasTask("publishToOSSRH") }
+    sign publishing.publications.mavenJava
+}
+
+// Publish using OSSRHUsername and OSSRHPassword properties
+nexusPublishing {
+    repositories {
+        OSSRH {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
