@@ -7,6 +7,10 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
+repositories {
+  mavenCentral()
+}
+
 group = 'com.fortify'
 version = '2.0'
 description 'Fortify SSC REST API client'
