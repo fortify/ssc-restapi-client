@@ -1,8 +1,13 @@
 {
   "groupId":"com.fortify",
   "artifactId":"ssc-restapi-client",
-  "artifactVersion":"2.0",
+  "artifactVersion":"21.1",
   "invokerPackage": "com.fortify.ssc.restclient",
   "apiPackage": "com.fortify.ssc.restclient.api",
-  "modelPackage": "com.fortify.ssc.restclient.model"
+  "modelPackage": "com.fortify.ssc.restclient.model",
+  "licenseName": "MIT License",
+  "dateLibrary": "java8",
+  "java8": "true",
+  "library": "okhttp-gson",
+  "hideGenerationTimestamp": "true"
 }
