@@ -12,7 +12,7 @@ repositories {
 }
 
 group = 'com.fortify'
-version = '21.1'
+version = '22.2'
 description 'Fortify SSC REST API client'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
