@@ -1,7 +1,7 @@
 {
   "groupId":"com.fortify",
   "artifactId":"ssc-restapi-client",
-  "artifactVersion":"21.1",
+  "artifactVersion":"22.2",
   "invokerPackage": "com.fortify.ssc.restclient",
   "apiPackage": "com.fortify.ssc.restclient.api",
   "modelPackage": "com.fortify.ssc.restclient.model",
