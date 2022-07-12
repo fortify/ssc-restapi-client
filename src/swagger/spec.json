@@ -1,10 +1,10 @@
 {
     "swagger":"2.0",
     "info":{
-        "version":"1:22.2.0.0049",
+        "version":"1:22.2.0.0054",
         "title":"Fortify Software Security Center API"
     },
-    "host":"qa-plg-ssc1.prgqa.hpecorp.net",
+    "host":"localhost:8080",
     "basePath":"/ssc/api/v1",
     "tags":[
         {
@@ -39901,6 +39901,12 @@
                 "artifactName":{
                     "type":"string",
                     "description":"Artifact name related to this job"
+                },
+                "cancelRequested":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Job cancel has been requested",
+                    "readOnly":true
                 },
                 "cancellable":{
                     "type":"boolean",
