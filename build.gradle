@@ -93,6 +93,9 @@ tasks.named("openApiGenerate").configure {
 
 compileJava.dependsOn tasks.openApiGenerate
 sourceSets.main.java.srcDir generatedCodeDir
+
+// codegen creates javadoc with tags which are unsupported
+// in HTML 5. We disable doclint to avoid build procedure failure
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
 }
@@ -130,7 +133,7 @@ publishing {
             }
             from components.java
             artifact sourcesJar
-            //artifact javadocJar
+            artifact javadocJar
         }
     }
 }
