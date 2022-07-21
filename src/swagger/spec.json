@@ -1,10 +1,10 @@
 {
     "swagger":"2.0",
     "info":{
-        "version":"1:22.2.0.0054",
+        "version":"1:22.1.2.0004",
         "title":"Fortify Software Security Center API"
     },
-    "host":"localhost:8080",
+    "host":"SSC:8080",
     "basePath":"/ssc/api/v1",
     "tags":[
         {
@@ -19425,6 +19425,91 @@
                 ]
             }
         },
+        "/projectVersions/{parentId}/dynamicScanRequests/action/cancel":{
+            "post":{
+                "tags":[
+                    "dynamic-scan-request-of-project-version-controller"
+                ],
+                "summary":"Cancel a dynamic scan request",
+                "operationId":"cancelDynamicScanRequestOfProjectVersion",
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "name":"parentId",
+                        "in":"path",
+                        "description":"parentId",
+                        "required":true,
+                        "type":"integer",
+                        "format":"int64"
+                    },
+                    {
+                        "in":"body",
+                        "name":"resource",
+                        "description":"resource",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/DynamicScanCancelRequest"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult«Void»"
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "401":{
+                        "description":"Unauthorized",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "409":{
+                        "description":"Conflict",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    }
+                },
+                "security":[
+                    {
+                        "FortifyToken":[
+
+                        ]
+                    }
+                ]
+            }
+        },
         "/projectVersions/{parentId}/dynamicScanRequests/{id}":{
             "get":{
                 "tags":[
@@ -37687,6 +37772,23 @@
             },
             "description":"Data Export DTO object"
         },
+        "DynamicScanCancelRequest":{
+            "type":"object",
+            "required":[
+                "dynamicScanRequestIds"
+            ],
+            "properties":{
+                "dynamicScanRequestIds":{
+                    "type":"array",
+                    "description":"List containing a single dynamic scan request id to cancel",
+                    "items":{
+                        "type":"integer",
+                        "format":"int64"
+                    }
+                }
+            },
+            "description":"Request for cancelling a dynamic scan request"
+        },
         "DynamicScanRequest":{
             "type":"object",
             "required":[
@@ -39659,7 +39761,7 @@
                 },
                 "filterSet":{
                     "type":"string",
-                    "description":"Application version filter set ID. If filterSet not provided, then both filterBy and issueQuery properties are ignored. If filterSet is provided, then issueInstanceIds property is ignored."
+                    "description":"Application version filter set id. Parameter must be set only if filterBy property is set that indicates that issues search expression must be used to identify issues to be filed as bugs. If issues are identified by IDs (issueInstanceIds parameter is set), filterSet must not be set"
                 },
                 "issueInstanceIds":{
                     "type":"array",
@@ -39667,10 +39769,6 @@
                     "items":{
                         "type":"string"
                     }
-                },
-                "issueQuery":{
-                    "type":"string",
-                    "description":"Issue search query expression to select issues for the request. If empty, bug will be filed for all visible issues in application version as per default filterset. Value is ignored if filterSet value is not set."
                 },
                 "password":{
                     "type":"string",
@@ -39901,12 +39999,6 @@
                 "artifactName":{
                     "type":"string",
                     "description":"Artifact name related to this job"
-                },
-                "cancelRequested":{
-                    "type":"boolean",
-                    "example":false,
-                    "description":"Job cancel has been requested",
-                    "readOnly":true
                 },
                 "cancellable":{
                     "type":"boolean",
@@ -43638,7 +43730,6 @@
                 "onDemandMode",
                 "permissions",
                 "preferences",
-                "priorityOverrideActive",
                 "roles",
                 "sessionId",
                 "userPhoto",
@@ -43709,11 +43800,6 @@
                     "description":"User preferences",
                     "$ref":"#/definitions/User preferences"
                 },
-                "priorityOverrideActive":{
-                    "type":"boolean",
-                    "example":false,
-                    "description":"Set to true if priority override feature is active"
-                },
                 "roles":{
                     "type":"array",
                     "description":"User roles",
@@ -43732,7 +43818,7 @@
                 "userType":{
                     "type":"integer",
                     "format":"int32",
-                    "description":"User Type. 0 for Local (Fortify), 2 for LDAP"
+                    "description":"User Type integer eg. 0 for Local"
                 },
                 "username":{
                     "type":"string",
