@@ -1,10 +1,10 @@
 {
     "swagger":"2.0",
     "info":{
-        "version":"1:22.1.2.0004",
+        "version":"1:22.2.0.0130",
         "title":"Fortify Software Security Center API"
     },
-    "host":"SSC:8080",
+    "host":"SSC_HOST",
     "basePath":"/ssc/api/v1",
     "tags":[
         {
@@ -118,6 +118,10 @@
         {
             "name":"feature-controller",
             "description":"Retrieve the features that this instance of SSC supports"
+        },
+        {
+            "name":"dependency-scan-issues-of-project-version-controller",
+            "description":"Internal use only - Retrieve the dependency scan issues of the application version.  This endpoint is still in development."
         },
         {
             "name":"responsibility-assignment-of-project-version-controller",
@@ -272,8 +276,12 @@
             "description":"Manage application versions. A variety of associated resources are accessible via links."
         },
         {
+            "name":"plugin-engine-types-of-project-version-controller",
+            "description":"Retrieve the plugin engineTypes of the scans in an application version"
+        },
+        {
             "name":"open-source-issues-of-project-version-controller",
-            "description":"Retrieve the OpenSource issues of the application version"
+            "description":"Deprecated - Retrieve the OpenSource issues of the application version.  Will be removed in a future release."
         },
         {
             "name":"rulepack-core-controller",
@@ -4292,6 +4300,83 @@
                         "required":true,
                         "schema":{
                             "$ref":"#/definitions/CloudJobCancelRequest"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult«Void»"
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "401":{
+                        "description":"Unauthorized",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "409":{
+                        "description":"Conflict",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    }
+                },
+                "security":[
+                    {
+                        "FortifyToken":[
+
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cloudjobs/action/prioritizeJob":{
+            "post":{
+                "tags":[
+                    "cloud-job-controller"
+                ],
+                "summary":"Move the job to the top of the queue",
+                "operationId":"prioritizeJobCloudJob",
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"body",
+                        "name":"resource",
+                        "description":"resource",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/PrioritizeScanCentralJobRequest"
                         }
                     }
                 ],
@@ -8608,6 +8693,83 @@
                 ]
             }
         },
+        "/dataExports/action/exportDependencyScanToCsv":{
+            "post":{
+                "tags":[
+                    "data-export-controller"
+                ],
+                "summary":"Export Dependency Scan data to csv",
+                "operationId":"exportDependencyScanToCsvForDataExport",
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"body",
+                        "name":"request",
+                        "description":"request",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/ExportDependencyScanToCsvRequest"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult«Void»"
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "401":{
+                        "description":"Unauthorized",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "409":{
+                        "description":"Conflict",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    }
+                },
+                "security":[
+                    {
+                        "FortifyToken":[
+
+                        ]
+                    }
+                ]
+            }
+        },
         "/dataExports/action/exportIssueStatsToCsv":{
             "post":{
                 "tags":[
@@ -8701,8 +8863,8 @@
                 "parameters":[
                     {
                         "in":"body",
-                        "name":"resource",
-                        "description":"resource",
+                        "name":"request",
+                        "description":"request",
                         "required":true,
                         "schema":{
                             "$ref":"#/definitions/ExportOscToCsvRequest"
@@ -19183,6 +19345,147 @@
                 ]
             }
         },
+        "/projectVersions/{parentId}/dependencyScanIssues":{
+            "get":{
+                "tags":[
+                    "dependency-scan-issues-of-project-version-controller"
+                ],
+                "summary":"list",
+                "operationId":"listDependencyScanIssuesOfProjectVersion",
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "name":"parentId",
+                        "in":"path",
+                        "description":"parentId",
+                        "required":true,
+                        "type":"integer",
+                        "format":"int64"
+                    },
+                    {
+                        "name":"engineType",
+                        "in":"query",
+                        "description":"engineType",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"filterset",
+                        "in":"query",
+                        "description":"Filter set to use",
+                        "required":false,
+                        "type":"string"
+                    },
+                    {
+                        "name":"start",
+                        "in":"query",
+                        "description":"A start offset in object listing",
+                        "required":false,
+                        "type":"integer",
+                        "default":0,
+                        "minimum":0,
+                        "format":"int32"
+                    },
+                    {
+                        "name":"limit",
+                        "in":"query",
+                        "description":"A maximum number of returned objects in listing, if '-1' or '0' no limit is applied",
+                        "required":false,
+                        "type":"integer",
+                        "default":200,
+                        "minimum":-1,
+                        "format":"int32"
+                    },
+                    {
+                        "name":"showhidden",
+                        "in":"query",
+                        "description":"If 'true', include hidden issues in search results. If 'false', exclude hidden issues from search results. If no options are set, use application version profile settings to get value of this option.",
+                        "required":false,
+                        "type":"boolean",
+                        "default":false
+                    },
+                    {
+                        "name":"showremoved",
+                        "in":"query",
+                        "description":"If 'true', include removed issues in search results. If 'false', exclude removed issues from search results. If no options are set, use application version profile settings to get value of this option.",
+                        "required":false,
+                        "type":"boolean",
+                        "default":false
+                    },
+                    {
+                        "name":"showsuppressed",
+                        "in":"query",
+                        "description":"If 'true', include suppressed issues in search results. If 'false', exclude suppressed issues from search results. If no options are set, use application version profile settings to get value of this option.",
+                        "required":false,
+                        "type":"boolean",
+                        "default":false
+                    },
+                    {
+                        "name":"fields",
+                        "in":"query",
+                        "description":"Output fields",
+                        "required":false,
+                        "type":"string"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult«List«DependencyScanIssue»»"
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "401":{
+                        "description":"Unauthorized",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "409":{
+                        "description":"Conflict",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    }
+                },
+                "security":[
+                    {
+                        "FortifyToken":[
+
+                        ]
+                    }
+                ]
+            }
+        },
         "/projectVersions/{parentId}/dynamicScanRequestTemplate":{
             "get":{
                 "tags":[
@@ -19377,91 +19680,6 @@
                         "description":"Created",
                         "schema":{
                             "$ref":"#/definitions/ApiResult«DynamicScanRequest»"
-                        }
-                    },
-                    "400":{
-                        "description":"Bad Request",
-                        "schema":{
-                            "$ref":"#/definitions/ApiResult"
-                        }
-                    },
-                    "401":{
-                        "description":"Unauthorized",
-                        "schema":{
-                            "$ref":"#/definitions/ApiResult"
-                        }
-                    },
-                    "403":{
-                        "description":"Forbidden",
-                        "schema":{
-                            "$ref":"#/definitions/ApiResult"
-                        }
-                    },
-                    "404":{
-                        "description":"Not Found",
-                        "schema":{
-                            "$ref":"#/definitions/ApiResult"
-                        }
-                    },
-                    "409":{
-                        "description":"Conflict",
-                        "schema":{
-                            "$ref":"#/definitions/ApiResult"
-                        }
-                    },
-                    "500":{
-                        "description":"Internal Server Error",
-                        "schema":{
-                            "$ref":"#/definitions/ApiResult"
-                        }
-                    }
-                },
-                "security":[
-                    {
-                        "FortifyToken":[
-
-                        ]
-                    }
-                ]
-            }
-        },
-        "/projectVersions/{parentId}/dynamicScanRequests/action/cancel":{
-            "post":{
-                "tags":[
-                    "dynamic-scan-request-of-project-version-controller"
-                ],
-                "summary":"Cancel a dynamic scan request",
-                "operationId":"cancelDynamicScanRequestOfProjectVersion",
-                "consumes":[
-                    "application/json"
-                ],
-                "produces":[
-                    "application/json"
-                ],
-                "parameters":[
-                    {
-                        "name":"parentId",
-                        "in":"path",
-                        "description":"parentId",
-                        "required":true,
-                        "type":"integer",
-                        "format":"int64"
-                    },
-                    {
-                        "in":"body",
-                        "name":"resource",
-                        "description":"resource",
-                        "required":true,
-                        "schema":{
-                            "$ref":"#/definitions/DynamicScanCancelRequest"
-                        }
-                    }
-                ],
-                "responses":{
-                    "200":{
-                        "description":"OK",
-                        "schema":{
-                            "$ref":"#/definitions/ApiResult«Void»"
                         }
                     },
                     "400":{
@@ -21873,6 +22091,94 @@
                         "description":"OK",
                         "schema":{
                             "$ref":"#/definitions/ApiResult«Performance Indicator History»"
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "401":{
+                        "description":"Unauthorized",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "409":{
+                        "description":"Conflict",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult"
+                        }
+                    }
+                },
+                "security":[
+                    {
+                        "FortifyToken":[
+
+                        ]
+                    }
+                ]
+            }
+        },
+        "/projectVersions/{parentId}/pluginEngineTypes":{
+            "get":{
+                "tags":[
+                    "plugin-engine-types-of-project-version-controller"
+                ],
+                "summary":"list",
+                "operationId":"listPluginEngineTypesOfProjectVersion",
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "name":"parentId",
+                        "in":"path",
+                        "description":"parentId",
+                        "required":true,
+                        "type":"integer",
+                        "format":"int64"
+                    },
+                    {
+                        "name":"parserType",
+                        "in":"query",
+                        "description":"Plugin parser type to filter on.  If parameter is null, no filtering on plugin parser type will happen.",
+                        "required":false,
+                        "type":"string",
+                        "enum":[
+                            "STATIC",
+                            "DYNAMIC",
+                            "DEPENDENCY_SCAN"
+                        ]
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/ApiResult«List«Engine type»»"
                         }
                     },
                     "400":{
@@ -28670,6 +28976,7 @@
                         "CLOUD_POOL_AVS_UPDATED",
                         "CLOUD_POOL_SENSORS_UPDATED",
                         "CLOUD_JOB_CANCELED",
+                        "CLOUD_JOB_PRIORITIZED",
                         "CLOUD_JOB_FPR_DOWNLOADED",
                         "CLOUD_JOB_LOG_DOWNLOADED",
                         "CLOUD_SENSORS_SHUT_DOWN",
@@ -31915,6 +32222,50 @@
                     "readOnly":true,
                     "items":{
                         "$ref":"#/definitions/Data Export"
+                    }
+                },
+                "errorCode":{
+                    "type":"integer",
+                    "format":"int32",
+                    "readOnly":true
+                },
+                "links":{
+                    "type":"object",
+                    "readOnly":true
+                },
+                "message":{
+                    "type":"string",
+                    "readOnly":true
+                },
+                "responseCode":{
+                    "type":"integer",
+                    "format":"int32",
+                    "readOnly":true
+                },
+                "stackTrace":{
+                    "type":"string",
+                    "readOnly":true
+                },
+                "successCount":{
+                    "type":"integer",
+                    "format":"int64",
+                    "readOnly":true
+                }
+            }
+        },
+        "ApiResult«List«DependencyScanIssue»»":{
+            "type":"object",
+            "properties":{
+                "count":{
+                    "type":"integer",
+                    "format":"int64",
+                    "readOnly":true
+                },
+                "data":{
+                    "type":"array",
+                    "readOnly":true,
+                    "items":{
+                        "$ref":"#/definitions/DependencyScanIssue"
                     }
                 },
                 "errorCode":{
@@ -36778,6 +37129,11 @@
                     "type":"string",
                     "readOnly":true
                 },
+                "priority":{
+                    "type":"integer",
+                    "format":"int64",
+                    "readOnly":true
+                },
                 "projectId":{
                     "type":"integer",
                     "format":"int64"
@@ -37469,7 +37825,7 @@
             },
             "description":"Information about current authentication"
         },
-        "Custom Tag Audit":{
+        "Custom Tag":{
             "type":"object",
             "required":[
                 "customTagGuid",
@@ -37772,22 +38128,135 @@
             },
             "description":"Data Export DTO object"
         },
-        "DynamicScanCancelRequest":{
+        "DependencyScanIssue":{
             "type":"object",
             "required":[
-                "dynamicScanRequestIds"
+                "category",
+                "controllable",
+                "cwes",
+                "engineType",
+                "evidence",
+                "externalId",
+                "externalUrl",
+                "filename",
+                "invoked",
+                "issueInstanceId",
+                "license",
+                "packageName",
+                "packageNamespace",
+                "packageType",
+                "packageUrl",
+                "priority",
+                "projectVersionId",
+                "upgradeToVersion",
+                "version"
             ],
             "properties":{
-                "dynamicScanRequestIds":{
+                "category":{
+                    "type":"string",
+                    "description":"The category for this issue, provided by the scanner."
+                },
+                "controllable":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Does the application send user input to the vulnerable open source code?"
+                },
+                "cwes":{
                     "type":"array",
-                    "description":"List containing a single dynamic scan request id to cancel",
+                    "description":"List of CWE IDs in the format 'CWE-xxxx'",
                     "items":{
-                        "type":"integer",
-                        "format":"int64"
+                        "type":"string"
                     }
+                },
+                "engineType":{
+                    "type":"string",
+                    "description":"Engine type"
+                },
+                "evidence":{
+                    "type":"string",
+                    "description":"URL for issue evidence"
+                },
+                "externalId":{
+                    "type":"string",
+                    "description":"Vulnerability ID provided by the analysis engine or parser"
+                },
+                "externalUrl":{
+                    "type":"string",
+                    "description":"URL to get more information about this vulnerability."
+                },
+                "filename":{
+                    "type":"string",
+                    "description":"Filename of the component where the issue exists"
+                },
+                "hidden":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Is this issue hidden?"
+                },
+                "id":{
+                    "type":"integer",
+                    "format":"int64",
+                    "description":"Application version issue identifier",
+                    "readOnly":true
+                },
+                "invoked":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Does the application call the vulnerable open source code?"
+                },
+                "issueInstanceId":{
+                    "type":"string",
+                    "description":"Issue instance identifier"
+                },
+                "license":{
+                    "type":"string",
+                    "description":"Component license"
+                },
+                "packageName":{
+                    "type":"string",
+                    "description":"Package name for the component"
+                },
+                "packageNamespace":{
+                    "type":"string",
+                    "description":"Package namespace for the component"
+                },
+                "packageType":{
+                    "type":"string",
+                    "description":"Package type"
+                },
+                "packageUrl":{
+                    "type":"string",
+                    "description":"Package URL - usually in the format <scheme>:<type>/<namespace>/<name>@<version>"
+                },
+                "priority":{
+                    "type":"string",
+                    "description":"Priority"
+                },
+                "projectVersionId":{
+                    "type":"integer",
+                    "format":"int64",
+                    "description":"Application version identifier"
+                },
+                "removed":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Is this issue removed?"
+                },
+                "suppressed":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Is this issue suppressed?"
+                },
+                "upgradeToVersion":{
+                    "type":"string",
+                    "description":"Component version to upgrade to"
+                },
+                "version":{
+                    "type":"string",
+                    "description":"Component version containing the issue vulnerability"
                 }
             },
-            "description":"Request for cancelling a dynamic scan request"
+            "description":"Dependency Scan Issue DTO."
         },
         "DynamicScanRequest":{
             "type":"object",
@@ -38385,6 +38854,7 @@
                         "CLOUD_POOL_AVS_UPDATED",
                         "CLOUD_POOL_SENSORS_UPDATED",
                         "CLOUD_JOB_CANCELED",
+                        "CLOUD_JOB_PRIORITIZED",
                         "CLOUD_JOB_FPR_DOWNLOADED",
                         "CLOUD_JOB_LOG_DOWNLOADED",
                         "CLOUD_SENSORS_SHUT_DOWN",
@@ -38524,6 +38994,64 @@
             },
             "description":"Request to export audit information to CSV file"
         },
+        "ExportDependencyScanToCsvRequest":{
+            "type":"object",
+            "required":[
+                "fileName",
+                "projectVersionId"
+            ],
+            "properties":{
+                "engineType":{
+                    "type":"string",
+                    "description":"Plugin engine type of issues to export"
+                },
+                "fileName":{
+                    "type":"string",
+                    "description":"File name to save"
+                },
+                "filterSet":{
+                    "type":"string",
+                    "description":"Filter set to use for issues"
+                },
+                "includeHidden":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Will include hidden issues"
+                },
+                "includeRemoved":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Will include removed issues"
+                },
+                "includeSuppressed":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Will include suppressed issues"
+                },
+                "limit":{
+                    "type":"integer",
+                    "format":"int32",
+                    "example":-1,
+                    "description":"Limit"
+                },
+                "note":{
+                    "type":"string",
+                    "description":"Note"
+                },
+                "projectVersionId":{
+                    "type":"integer",
+                    "format":"int64",
+                    "description":"Application version id to export dependency scan data"
+                },
+                "start":{
+                    "type":"integer",
+                    "format":"int32",
+                    "example":0,
+                    "description":"Start"
+                }
+            },
+            "description":"Request to export dependency scan information to CSV file"
+        },
         "ExportIssueStatsToCSVRequest":{
             "type":"object",
             "required":[
@@ -38563,17 +39091,13 @@
                 "projectVersionId"
             ],
             "properties":{
-                "datasetName":{
-                    "type":"string",
-                    "description":"Dataset name",
-                    "readOnly":true,
-                    "enum":[
-                        "Open Source Components"
-                    ]
-                },
                 "fileName":{
                     "type":"string",
                     "description":"File name to save"
+                },
+                "filterSet":{
+                    "type":"string",
+                    "description":"Filter set to use for issues"
                 },
                 "includeHidden":{
                     "type":"boolean",
@@ -39077,6 +39601,11 @@
                     "type":"integer",
                     "format":"int64",
                     "description":"document ID referencing the attachment",
+                    "readOnly":true
+                },
+                "guid":{
+                    "type":"string",
+                    "description":"Attachment GUID",
                     "readOnly":true
                 },
                 "id":{
@@ -39631,7 +40160,7 @@
                     "type":"array",
                     "description":"Custom tag values that are set for the issue.",
                     "items":{
-                        "$ref":"#/definitions/Custom Tag Audit"
+                        "$ref":"#/definitions/Custom Tag"
                     }
                 },
                 "issues":{
@@ -39670,7 +40199,7 @@
                     "description":"Custom tag values that are set for the issue.",
                     "readOnly":true,
                     "items":{
-                        "$ref":"#/definitions/Custom Tag Audit"
+                        "$ref":"#/definitions/Custom Tag"
                     }
                 },
                 "id":{
@@ -39761,7 +40290,7 @@
                 },
                 "filterSet":{
                     "type":"string",
-                    "description":"Application version filter set id. Parameter must be set only if filterBy property is set that indicates that issues search expression must be used to identify issues to be filed as bugs. If issues are identified by IDs (issueInstanceIds parameter is set), filterSet must not be set"
+                    "description":"Application version filter set ID. If filterSet not provided, then both filterBy and issueQuery properties are ignored. If filterSet is provided, then issueInstanceIds property is ignored."
                 },
                 "issueInstanceIds":{
                     "type":"array",
@@ -39769,6 +40298,10 @@
                     "items":{
                         "type":"string"
                     }
+                },
+                "issueQuery":{
+                    "type":"string",
+                    "description":"Issue search query expression to select issues for the request. If empty, bug will be filed for all visible issues in application version as per default filterset. Value is ignored if filterSet value is not set."
                 },
                 "password":{
                     "type":"string",
@@ -39916,7 +40449,7 @@
             "properties":{
                 "customTagAudit":{
                     "description":"Custom tag values that are set for the issue.",
-                    "$ref":"#/definitions/Custom Tag Audit"
+                    "$ref":"#/definitions/Custom Tag"
                 },
                 "issues":{
                     "type":"array",
@@ -39999,6 +40532,12 @@
                 "artifactName":{
                     "type":"string",
                     "description":"Artifact name related to this job"
+                },
+                "cancelRequested":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Job cancel has been requested",
+                    "readOnly":true
                 },
                 "cancellable":{
                     "type":"boolean",
@@ -40697,7 +41236,7 @@
                 },
                 "component":{
                     "type":"string",
-                    "description":"Component - usually in the format <group>:<artifact>"
+                    "description":"Component - usually in the format <group>/<artifact>"
                 },
                 "controllable":{
                     "type":"boolean",
@@ -41128,6 +41667,19 @@
                 }
             },
             "description":"Audit Assistant prediction policy replacement mapping"
+        },
+        "PrioritizeScanCentralJobRequest":{
+            "type":"object",
+            "required":[
+                "jobToken"
+            ],
+            "properties":{
+                "jobToken":{
+                    "type":"string",
+                    "description":"The guid of the ScanCentral job to prioritize"
+                }
+            },
+            "description":"Request for prioritizing ScanCentral job"
         },
         "Project":{
             "type":"object",
@@ -41835,7 +42387,7 @@
                     "type":"array",
                     "description":"Custom tag values",
                     "items":{
-                        "$ref":"#/definitions/Custom Tag Audit"
+                        "$ref":"#/definitions/Custom Tag"
                     }
                 },
                 "dataVersion":{
@@ -43718,6 +44270,7 @@
             "type":"object",
             "required":[
                 "applicationContextPath",
+                "canChangePassword",
                 "cloudScanConfig",
                 "collabModuleEnabled",
                 "displayUserDetails",
@@ -43730,6 +44283,7 @@
                 "onDemandMode",
                 "permissions",
                 "preferences",
+                "priorityOverrideActive",
                 "roles",
                 "sessionId",
                 "userPhoto",
@@ -43742,6 +44296,11 @@
                 "applicationContextPath":{
                     "type":"string",
                     "description":"Application context path"
+                },
+                "canChangePassword":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Set to true if user can change password in SSC"
                 },
                 "cloudScanConfig":{
                     "description":"ScanCentral configuration",
@@ -43771,7 +44330,7 @@
                 },
                 "fortifyUserType":{
                     "type":"string",
-                    "description":"Fortify user type eg. LOCAL"
+                    "description":"LOCAL for standard local users, SSO for local users who are only allowed to log in using SSO"
                 },
                 "lastName":{
                     "type":"string",
@@ -43800,6 +44359,11 @@
                     "description":"User preferences",
                     "$ref":"#/definitions/User preferences"
                 },
+                "priorityOverrideActive":{
+                    "type":"boolean",
+                    "example":false,
+                    "description":"Set to true if priority override feature is active"
+                },
                 "roles":{
                     "type":"array",
                     "description":"User roles",
@@ -43818,7 +44382,7 @@
                 "userType":{
                     "type":"integer",
                     "format":"int32",
-                    "description":"User Type integer eg. 0 for Local"
+                    "description":"User Type. 0 for Local (Fortify), 2 for LDAP"
                 },
                 "username":{
                     "type":"string",
