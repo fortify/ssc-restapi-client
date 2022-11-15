@@ -30,7 +30,7 @@ dependencies {
   implementation "org.openapitools:openapi-generator-gradle-plugin:5.2.1"
   implementation 'com.squareup.okhttp3:okhttp:4.10.0'
   implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
-  implementation 'io.swagger:swagger-annotations:1.6.6'
+  implementation 'io.swagger:swagger-annotations:1.6.9'
   implementation 'com.google.code.gson:gson:2.8.9'
   implementation 'io.gsonfire:gson-fire:1.8.5'
   implementation("com.google.code.findbugs:jsr305:3.0.2")
