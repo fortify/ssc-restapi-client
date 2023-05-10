@@ -12,7 +12,7 @@ repositories {
 }
 
 group = 'com.fortify'
-version = '23.1'
+version = '23.1.1'
 description 'Fortify SSC REST API client'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -60,12 +60,15 @@ artifacts {
 }
 
 task fixAndCopySwaggerSpec(type: Sync) {
-    description 'Read spec-rest.json and remove « and » characters. Write modified file to task temporaryDir'
+    description 'Read spec-rest.json and remove « and » characters and rename [Custom Tag] to [Custom Tag Audit] to avoid collision with [Custom tag] (lower case). Write modified file to task temporaryDir'
     into(modifiedSpecDir)
     from(originalSpecDir) {
         filteringCharset = "UTF-8"
         filter({ String s ->
             s.replaceAll(/[\u00ab\u00bb]/, "")    // [«»]
+        })
+        filter({ String s ->
+            s.replaceAll(/Custom Tag/, 'Custom Tag Audit')    // [Custom Tag]
         })
     }
 }

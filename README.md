@@ -27,7 +27,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.fortify</groupId>
     <artifactId>ssc-restapi-client</artifactId>
-    <version>23.1</version>
+    <version>23.1.1</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -37,7 +37,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.fortify:ssc-restapi-client:23.1"
+compile "com.fortify:ssc-restapi-client:23.1.1"
 ```
 
 ### Others
@@ -45,7 +45,7 @@ compile "com.fortify:ssc-restapi-client:23.1"
 At first generate the JAR by running the gradle build
 Then manually install the following JARs:
 
-* build/libs/ssc-restapi-client-23.1.jar
+* build/libs/ssc-restapi-client-23.1.1.jar
 * build/swagger-code-ssc/build/target/lib/*.jar
 
 ## Getting Started
