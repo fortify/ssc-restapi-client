@@ -27,7 +27,6 @@ ext {
 
 dependencies {
 
-  implementation "org.openapitools:openapi-generator-gradle-plugin:5.4.0"
   implementation 'com.squareup.okhttp3:okhttp:4.11.0'
   implementation 'com.squareup.okhttp3:logging-interceptor:4.11.0'
   implementation 'io.swagger:swagger-annotations:1.6.10'
