@@ -27,7 +27,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.fortify</groupId>
     <artifactId>ssc-restapi-client</artifactId>
-    <version>23.1.1</version>
+    <version>23.1.2</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -37,16 +37,8 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.fortify:ssc-restapi-client:23.1.1"
+compile "com.fortify:ssc-restapi-client:23.1.2"
 ```
-
-### Others
-
-At first generate the JAR by running the gradle build
-Then manually install the following JARs:
-
-* build/libs/ssc-restapi-client-23.1.1.jar
-* build/swagger-code-ssc/build/target/lib/*.jar
 
 ## Getting Started
 
@@ -101,6 +93,10 @@ Authentication schemes defined for the API:
 - **API key parameter name**: Authorization
 - **Location**: HTTP header
 
+## Compatibility:
+
+The first two digits of the ssc-restapi-client version correspond to the version of SSC where the REST API specification has been pulled from. The last digit is reserved for fixing problems with this library itself, it does not affect compatibility.
+SSC API was designed with backwards compatibility in mind, so you are most likely should be able to use the newer client with an older SSC (and vice versa). Not all features may be available in this case.
 
 ## Recommendation
 
