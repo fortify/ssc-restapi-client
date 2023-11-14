@@ -1,7 +1,7 @@
 plugins {
   id 'java'
   id 'idea'
-  id ('org.openapi.generator') version('7.0.1')
+  id ('org.openapi.generator') version('5.4.0') //we can't update now due to okhttp-gson-nextgen validates json attributes, but SSC sends an additional undocumented _href attribute
   id 'maven-publish'
   id 'signing'
   id 'io.github.gradle-nexus.publish-plugin' version '1.3.0'
@@ -32,7 +32,8 @@ dependencies {
   implementation 'com.google.code.gson:gson:2.10.1'
   implementation 'io.gsonfire:gson-fire:1.9.0'
   implementation 'com.google.code.findbugs:jsr305:3.0.2'
-  implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+  implementation 'io.swagger:swagger-annotations:1.6.10'
+  implementation 'jakarta.annotation:jakarta.annotation-api:1.3.5'
   implementation 'com.squareup.okio:okio-jvm:3.6.0'
   implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.20'
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20'
@@ -89,8 +90,8 @@ openApiGenerate {
         serializationLibrary: "gson",
         openApiNullable: "false",
         hideGenerationTimestamp: "true",
-        annotationLibrary: "none",
-        useJakartaEe: "true"
+        annotationLibrary: "none",  //this is only available in openapi generator v6.x
+        useJakartaEe: "true" //this is only available in openapi generator v7.x
     ]
 }
 
