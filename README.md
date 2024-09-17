@@ -2,7 +2,7 @@
 
 # Fortify Software Security Center REST API java client
 Communicate with Fortify Software Security Center through REST API in java, a swagger generated client
-- API version: 1:24.2.0.0152
+- API version: 1:24.4.0.0320
 
 ## Generation:
 
@@ -27,7 +27,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.fortify</groupId>
     <artifactId>ssc-restapi-client</artifactId>
-    <version>24.2</version>
+    <version>24.4</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -37,7 +37,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.fortify:ssc-restapi-client:24.2"
+compile "com.fortify:ssc-restapi-client:24.4"
 ```
 
 ## Getting Started
